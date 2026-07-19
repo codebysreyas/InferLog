@@ -4,11 +4,6 @@ import { redactPII } from "@/lib/pii";
 import { inferenceLogSchema } from "@/lib/validation";
 import { emitInferenceLogged } from "@/lib/events";
 
-/**
- * Ingestion endpoint for the logging SDK. Every inference call — success,
- * error, or cancellation — lands here asynchronously and is persisted
- * independently of the request that produced it.
- */
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   if (!body) {
@@ -34,7 +29,9 @@ export async function POST(req: NextRequest) {
         provider: payload.provider,
         model: payload.model,
         promptPreview: redactPII(payload.promptPreview),
-        completionPreview: payload.completionPreview ? redactPII(payload.completionPreview) : null,
+        completionPreview: payload.completionPreview
+          ? redactPII(payload.completionPreview)
+          : null,
         promptTokens: payload.promptTokens,
         completionTokens: payload.completionTokens,
         totalTokens: payload.totalTokens,
@@ -60,6 +57,7 @@ export async function POST(req: NextRequest) {
     if (error instanceof Error && error.message.includes("Unique constraint")) {
       return NextResponse.json({ error: "Duplicate requestId" }, { status: 409 });
     }
+
     return NextResponse.json({ error: "Failed to store log" }, { status: 500 });
   }
 }
