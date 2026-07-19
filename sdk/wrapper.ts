@@ -14,10 +14,6 @@ export interface WrapContext {
   messageId?: string;
 }
 
-/**
- * Wraps an AIProvider so every chat/stream call automatically produces an
- * InferenceLogEntry, without the call site having to know about logging.
- */
 export class LoggedProvider {
   constructor(
     private readonly provider: AIProvider,
@@ -96,7 +92,16 @@ export class LoggedProvider {
     ctx: WrapContext,
     model: string,
     startedAt: number,
-    fields: Omit<InferenceLogEntry, "requestId" | "conversationId" | "messageId" | "provider" | "model" | "latencyMs" | "totalTokens">,
+    fields: Omit<
+      InferenceLogEntry,
+      | "requestId"
+      | "conversationId"
+      | "messageId"
+      | "provider"
+      | "model"
+      | "latencyMs"
+      | "totalTokens"
+    >,
   ) {
     const latencyMs = Math.round(performance.now() - startedAt);
     this.logger.log({
