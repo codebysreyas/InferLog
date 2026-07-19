@@ -7,12 +7,6 @@ import { createLoggedProvider } from "@sdk/client";
 
 export const runtime = "nodejs";
 
-/**
- * Streams a chat completion back to the client as newline-delimited JSON
- * events while the SDK independently ships an inference log to /api/logs.
- * Persists the conversation/message rows synchronously so the UI has a
- * durable history even if the browser drops the stream.
- */
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = chatRequestSchema.safeParse(body);
@@ -70,10 +64,15 @@ export async function POST(req: NextRequest) {
 
       let full = "";
       try {
-        for await (const chunk of loggedProvider.stream(chatHistory, model, {
-          conversationId: conversation.id,
-          messageId: assistantMessageId,
-        }, abortController.signal)) {
+        for await (const chunk of loggedProvider.stream(
+          chatHistory,
+          model,
+          {
+            conversationId: conversation.id,
+            messageId: assistantMessageId,
+          },
+          abortController.signal,
+        )) {
           if (chunk.type === "delta") {
             full += chunk.text;
             send({ type: "delta", text: chunk.text });
@@ -81,8 +80,14 @@ export async function POST(req: NextRequest) {
         }
 
         await db.message.create({
-          data: { id: assistantMessageId, conversationId: conversation.id, role: "ASSISTANT", content: full },
+          data: {
+            id: assistantMessageId,
+            conversationId: conversation.id,
+            role: "ASSISTANT",
+            content: full,
+          },
         });
+
         await db.conversation.update({
           where: { id: conversation.id },
           data: { updatedAt: new Date() },
@@ -90,11 +95,15 @@ export async function POST(req: NextRequest) {
 
         send({ type: "done" });
       } catch (error) {
-        send({ type: "error", message: error instanceof Error ? error.message : "Stream failed" });
+        send({
+          type: "error",
+          message: error instanceof Error ? error.message : "Stream failed",
+        });
       } finally {
         controller.close();
       }
     },
+
     cancel() {
       abortController.abort();
     },
