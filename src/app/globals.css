@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+::selection {
+  background-color: #dbeafe;
+}
+
+.prose-chat pre {
+  background: #111827;
+  color: #f3f4f6;
+  border-radius: 6px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+}
+
+.prose-chat code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.prose-chat p {
+  margin: 0.5rem 0;
+}
