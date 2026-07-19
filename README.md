@@ -225,15 +225,14 @@ OpenAI, Claude, and Gemini implement the same `AIProvider` interface (`src/lib/p
 
 ## Screenshots
 
-| Landing (`/`) | Chat (`/chat`) |
+| Landing  | Chat |
 |---|---|
 | ![Landing page](screenshots/landing.png) | ![Chat interface](screenshots/chat.png) |
 
-| Conversations (`/conversations`) | Dashboard (`/dashboard`) |
+| Conversations  | Dashboard  |
 |---|---|
 | ![Conversations list](screenshots/conversations.png) | ![Analytics dashboard](screenshots/dashboard.png) |
 
-*(Screenshot filenames above are placeholders — rename the files you add to `screenshots/` to match, or update the paths in this table.)*
 
 ## Deployment
 
